@@ -1,0 +1,47 @@
+package com.bnkcfplus.exercise.service;
+
+import com.bnkcfplus.exercise.dto.ProductDto;
+import com.bnkcfplus.exercise.entity.ProductEntity;
+import com.bnkcfplus.exercise.mapper.ProductMapper;
+import com.bnkcfplus.exercise.model.Product;
+import com.bnkcfplus.exercise.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class ProductService {
+    private final ProductRepository repository;
+    private final ProductMapper mapper = Mappers.getMapper(ProductMapper.class);
+
+    public List<ProductDto> retrieveAllProducts(){
+        return Optional.ofNullable(repository)
+                .map(ProductRepository::findAll)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public Optional<ProductDto> findProduct(long id){
+        return Optional.of(id)
+                .map(repository::findById)
+                .orElse(null)
+                .map(mapper::mapToDto);
+    }
+
+    public Optional<ProductDto> saveProduct(Product product){
+        return Optional.of(product)
+                .map(mapper::mapToEntity)
+                .map(repository::save)
+                .map(mapper::mapToDto);
+    }
+
+}
