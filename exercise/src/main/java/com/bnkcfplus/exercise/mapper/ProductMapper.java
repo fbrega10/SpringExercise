@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 public interface ProductMapper {
 
     ProductDto mapToDto(ProductEntity product);
+
     ProductEntity mapToEntity(Product product);
 
 }

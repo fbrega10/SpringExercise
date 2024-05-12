@@ -1,7 +1,6 @@
 package com.bnkcfplus.exercise.service;
 
 import com.bnkcfplus.exercise.dto.ProductDto;
-import com.bnkcfplus.exercise.exceptions.NoIdException;
 import com.bnkcfplus.exercise.mapper.ProductMapper;
 import com.bnkcfplus.exercise.model.Product;
 import com.bnkcfplus.exercise.repository.ProductRepository;
@@ -12,12 +11,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class ProductService {
+
     private final ProductRepository repository;
     private final ProductMapper mapper = Mappers.getMapper(ProductMapper.class);
 
@@ -25,8 +26,7 @@ public class ProductService {
         return Optional.ofNullable(repository)
                 .map(ProductRepository::findAll)
                 .orElse(Collections.emptyList())
-                .stream()
-                .map(mapper::mapToDto)
+                .stream().map(mapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -45,13 +45,11 @@ public class ProductService {
                 .map(mapper::mapToDto);
     }
 
-    public Optional<ProductDto> update(Product product) throws NoIdException {
-        if (product.getId() == null) {
-            throw new NoIdException();
-        }
+    public Optional<ProductDto> update(Product product) {
         return Optional.of(product)
                 .map(Product::getId)
                 .map(repository::findById)
+                .filter(Objects::nonNull)
                 .map(prod -> mapper.mapToEntity(product))
                 .map(repository::save)
                 .map(mapper::mapToDto);

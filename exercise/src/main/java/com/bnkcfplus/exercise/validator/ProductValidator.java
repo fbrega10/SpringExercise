@@ -7,17 +7,17 @@ import java.util.Optional;
 
 public class ProductValidator {
 
-    public static Void validatePostProduct(Product product) throws ValidationException {
+    public static void validatePostProduct(Product product) throws ValidationException {
         Optional.ofNullable(product)
                 .filter(prod -> prod.getName() != null && prod.getPrice() != null)
                 .orElseThrow(ValidationException::new);
-        return null;
     }
 
-    public static Void validatePutProduct(Product product) throws ValidationException {
+    public static void validatePutProduct(Product product) throws ValidationException {
         Optional.ofNullable(product)
-                .filter(prod -> prod.getName() != null && prod.getPrice() != null && prod.getId() != null)
+                .filter(prod -> prod.getName() != null
+                        && prod.getPrice() != null
+                        && prod.getId() != null)
                 .orElseThrow(ValidationException::new);
-        return null;
     }
 }

@@ -1,5 +1,7 @@
 #!/bin/bash
 
-curl -kvX PUT  localhost:8080/api/v1/products \
+BASE_URL=https://127.0.0.1:443
+
+curl --cert-type P12 --cert keystore.p12:abcdef -kvX PUT  $URL/api/v1/products \
     -H 'content-type: application/json'\
   -d ' {"id": "2", "name" : "newloan", "price" : "234242"}' | jq .
