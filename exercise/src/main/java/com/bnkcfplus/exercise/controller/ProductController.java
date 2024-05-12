@@ -2,19 +2,14 @@ package com.bnkcfplus.exercise.controller;
 
 
 import com.bnkcfplus.exercise.dto.ProductDto;
+import com.bnkcfplus.exercise.exceptions.NoIdException;
 import com.bnkcfplus.exercise.model.Product;
 import com.bnkcfplus.exercise.service.ProductService;
 import com.bnkcfplus.exercise.utility.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +23,7 @@ public class ProductController {
 
     @GetMapping(value = "/products")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ProductDto>> retrieveProducts(){
+    public ResponseEntity<List<ProductDto>> retrieveProducts() {
         return Optional.ofNullable(service)
                 .map(ProductService::retrieveAllProducts)
                 .map(ResponseEntity::ok)
@@ -43,13 +38,16 @@ public class ProductController {
 
     @PostMapping(value = "/products")
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductDto postProduct(@RequestBody Product product){
+    public ProductDto postProduct(@RequestBody Product product) {
         return service.saveProduct(product).orElse(null);
     }
 
-    //@PutMapping(value = "/products")
-    //@ResponseStatus(HttpStatus.OK)
-    //public ProductDto putProduct(@RequestBody Product product){
-
-    //}
+    @PutMapping(value = "/products")
+    public ResponseEntity<ProductDto> putProduct(@RequestBody Product product) throws NoIdException {
+        try {
+            return service.update(product).map(ResponseEntity::ok).orElse(null);
+        } catch (NoIdException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

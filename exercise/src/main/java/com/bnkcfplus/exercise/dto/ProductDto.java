@@ -1,8 +1,9 @@
 package com.bnkcfplus.exercise.dto;
 
-import com.bnkcfplus.exercise.resource.BaseResource;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

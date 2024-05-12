@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class Product implements Serializable {
     @JsonProperty(value = "id")
-    private String id;
+    private Long id;
     @JsonProperty(value = "name")
     private String name;
     @JsonProperty(value = "price")

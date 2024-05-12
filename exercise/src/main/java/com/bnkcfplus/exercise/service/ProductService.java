@@ -1,6 +1,7 @@
 package com.bnkcfplus.exercise.service;
 
 import com.bnkcfplus.exercise.dto.ProductDto;
+import com.bnkcfplus.exercise.exceptions.NoIdException;
 import com.bnkcfplus.exercise.mapper.ProductMapper;
 import com.bnkcfplus.exercise.model.Product;
 import com.bnkcfplus.exercise.repository.ProductRepository;
@@ -20,7 +21,7 @@ public class ProductService {
     private final ProductRepository repository;
     private final ProductMapper mapper = Mappers.getMapper(ProductMapper.class);
 
-    public List<ProductDto> retrieveAllProducts(){
+    public List<ProductDto> retrieveAllProducts() {
         return Optional.ofNullable(repository)
                 .map(ProductRepository::findAll)
                 .orElse(Collections.emptyList())
@@ -29,7 +30,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<ResponseEntity<ProductDto>> findProduct(long id){
+    public Optional<ResponseEntity<ProductDto>> findProduct(long id) {
         return Optional.of(id)
                 .map(repository::findById)
                 .orElse(null)
@@ -37,17 +38,22 @@ public class ProductService {
                 .map(ResponseEntity::ok);
     }
 
-    public Optional<ProductDto> saveProduct(Product product){
+    public Optional<ProductDto> saveProduct(Product product) {
         return Optional.of(product)
                 .map(mapper::mapToEntity)
                 .map(repository::save)
                 .map(mapper::mapToDto);
     }
 
-    //public Optional<ProductDto> putProduct(Product product){
-        //return Optional.of(product)
-                //.map(mapper::mapToEntity)
-                //.map(repository::)
-                //.map(mapper::mapToDto);
-
+    public Optional<ProductDto> update(Product product) throws NoIdException {
+        if (product.getId() == null) {
+            throw new NoIdException();
+        }
+        return Optional.of(product)
+                .map(Product::getId)
+                .map(repository::findById)
+                .map(prod -> mapper.mapToEntity(product))
+                .map(repository::save)
+                .map(mapper::mapToDto);
+    }
 }
