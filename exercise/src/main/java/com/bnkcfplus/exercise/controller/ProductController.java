@@ -4,8 +4,10 @@ package com.bnkcfplus.exercise.controller;
 import com.bnkcfplus.exercise.dto.ProductDto;
 import com.bnkcfplus.exercise.model.Product;
 import com.bnkcfplus.exercise.service.ProductService;
+import com.bnkcfplus.exercise.utility.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,29 +23,33 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1")
 public class ProductController {
-    /*
-    this is the main Controller class in which we filter our requests
-    in their different methods
-     */
+
     private final ProductService service;
 
     @GetMapping(value = "/products")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDto> retrieveProducts(){
+    public ResponseEntity<List<ProductDto>> retrieveProducts(){
         return Optional.ofNullable(service)
                 .map(ProductService::retrieveAllProducts)
-                .orElse(null);
+                .map(ResponseEntity::ok)
+                .orElse(Utility.emptyTable());
     }
 
     @GetMapping(value = "/products/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductDto getProduct(@PathVariable(value = "id") long id) throws Exception {
-        return service.findProduct(id).orElse(null);
+    public ResponseEntity<ProductDto> getProduct(@PathVariable(value = "id") long id) {
+        return service.findProduct(id).orElse(Utility.contentNotFound(id));
     }
 
-    @PostMapping(value = "/product")
+    @PostMapping(value = "/products")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDto postProduct(@RequestBody Product product){
         return service.saveProduct(product).orElse(null);
     }
+
+    //@PutMapping(value = "/products")
+    //@ResponseStatus(HttpStatus.OK)
+    //public ProductDto putProduct(@RequestBody Product product){
+
+    //}
 }
